@@ -53,8 +53,8 @@ export default function Categories() {
             onClick={() => setSelectedGenre(genre.id)}
             className={`px-4 py-2 rounded font-medium transition cursor-pointer ${
               selectedGenre === genre.id
-                ? "bg-blue-600 text-gray-100"
-                : "bg-gray-700 text-gray-200 hover:bg-blue-500 hover:text-gray-100"
+                ? "bg-red-600 text-gray-100"
+                : "bg-gray-700 text-gray-200 hover:bg-red-500 hover:text-gray-100"
             }`}
           >
             {genre.name}

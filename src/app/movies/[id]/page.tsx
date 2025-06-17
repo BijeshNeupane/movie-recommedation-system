@@ -142,8 +142,8 @@ export default function MovieDetails() {
               className={`px-4 py-2 rounded font-semibold transition cursor-pointer ${
                 streamLoading
                   ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 text-gray-100 hover:bg-blue-500"
-              } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                  : "bg-[#ED0800] hover:bg-[#ff0800] text-white border-2 border-[#ED0800] hover:border-[#ff0800] hover:-translate-y-1"
+              } focus:outline-none focus:ring-2 focus:ring-blue-500 active:scale-95`}
               aria-label={`Watch ${movieDetails.title}`}
             >
               {streamLoading ? "Searching..." : "Watch Now"}
@@ -154,7 +154,7 @@ export default function MovieDetails() {
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded bg-blue-600 text-gray-100 hover:bg-blue-500 text-center"
+              className="px-4 py-2 rounded border-2 border-[#ED0800] hover:bg-[#ff0800] text-white text-center transition active:scale-95 hover:-translate-y-1"
               aria-label={`Search ${movieDetails.title} on Tubi`}
             >
               Try Tubi

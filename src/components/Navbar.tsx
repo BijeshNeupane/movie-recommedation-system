@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setSearchQuery } from "@/redux/Slices/movieSlice";
 import { useRouter } from "next/navigation";
+import SplitText from "@/blocks/TextAnimations/SplitText/SplitText";
 
 export default function Navbar() {
   const [searchInput, setSearchInput] = useState("");
@@ -19,29 +20,43 @@ export default function Navbar() {
       setSearchInput(""); // Clear input after search
     }
   };
+  const handleAnimationComplete = () => {
+    console.log("All letters have animated!");
+  };
 
   return (
-    <nav className="bg-gray-800 p-4 shadow-md">
+    <nav className="bg-red-800 p-4 shadow-md">
       <div className="container mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
         <Link
           href="/"
-          className="text-gray-100 text-lg font-bold hover:text-blue-400 transition"
+          className="text-gray-100 text-lg md:text-2xl font-bold hover:text-gray-300 transition"
         >
-          Movie Recommender
+          <SplitText
+            text="Movie Recommender"
+            className="text-2xl font-semibold text-center"
+            delay={100}
+            duration={0.6}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin="-100px"
+            textAlign="center"
+            onLetterAnimationComplete={handleAnimationComplete}
+          />
         </Link>
         <div className="flex items-center flex-wrap gap-4 justify-center space-x-4">
           <div className="space-x-4">
-            <Link
-              href="/"
-              className="text-gray-200 hover:text-blue-400 transition"
-            >
-              Home
+            <Link href="/">
+              <button className="bg-black px-4 py-2 rounded-xl cursor-pointer hover:bg-gray-900 transition hover:scale-105 active:scale-95">
+                Home
+              </button>
             </Link>
-            <Link
-              href="/categories"
-              className="text-gray-200 hover:text-blue-400 transition"
-            >
-              Categories
+            <Link href="/categories" className="">
+              <button className="bg-black px-4 py-2 rounded-xl cursor-pointer hover:bg-gray-900 transition hover:scale-105 active:scale-95">
+                Categories
+              </button>
             </Link>
           </div>
           <form onSubmit={handleSearch} className="flex items-center">
@@ -50,12 +65,12 @@ export default function Navbar() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search movies..."
-              className="px-3 py-2 rounded-l-md bg-gray-700 text-gray-200 border-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-2 rounded-l-md bg-black text-white border-none focus:outline-none focus:ring-2 focus:ring-red-500"
               aria-label="Search movies"
             />
             <button
               type="submit"
-              className="px-3 py-2 rounded-r-md bg-blue-600 text-gray-100 hover:bg-blue-500 transition"
+              className="px-3 py-2 rounded-r-md text-gray-100 bg-[#ED0800] hover:bg-[#ff0800] transition cursor-pointer active:scale-95"
               aria-label="Submit search"
             >
               Search

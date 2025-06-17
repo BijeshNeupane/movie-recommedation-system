@@ -8,7 +8,6 @@ interface CustomError extends Error {
   response?: { data?: unknown };
   errors?: unknown;
 }
-
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const movieId = searchParams.get("movieId");

@@ -20,7 +20,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
   return (
     <Link
       href={`/movies/${movie.id}`}
-      className="group block rounded-lg overflow-hidden shadow-lg hover:shadow-blue-500/50 transition-shadow bg-gray-800"
+      className="group block rounded-lg overflow-hidden shadow-lg hover:shadow-red-800/50 transition-shadow bg-gray-800"
     >
       <div className="relative h-80">
         <Image

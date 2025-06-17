@@ -1,43 +1,43 @@
 "use client";
 
-import { Movie } from "@/types/movie";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { Movie } from "@/types/movie";
 
 interface MovieCardProps {
   movie: Movie;
 }
 
 export default function MovieCard({ movie }: MovieCardProps) {
-  const [imgSrc, setImgSrc] = useState(
-    movie.poster_path
-      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-      : "/placeholder.jpg"
-  );
+  const [imgError, setImgError] = useState(false);
 
-  const handleError = () => {
-    setImgSrc("/placeholder.jpg"); // Fallback to placeholder on error
-  };
+  const imageSrc =
+    !imgError && movie.poster_path
+      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+      : "/placeholder.jpg";
 
   return (
-    <Link href={`/movies/${movie.id}`} className="block">
-      <div className="bg-gray-800 shadow-lg rounded-lg overflow-hidden transition-transform hover:scale-105">
+    <Link
+      href={`/movies/${movie.id}`}
+      className="group block rounded-lg overflow-hidden shadow-lg hover:shadow-blue-500/50 transition-shadow bg-gray-800"
+    >
+      <div className="relative h-80">
         <Image
-          src={imgSrc}
+          src={imageSrc}
           alt={movie.title}
-          width={500}
-          height={750}
-          className="w-full h-64 object-cover cursor-pointer"
-          onError={handleError}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={() => setImgError(true)}
         />
-        <div className="p-4">
-          <h3 className="text-lg font-semibold text-gray-100">{movie.title}</h3>
-          <p className="text-sm text-gray-400">{movie.release_date}</p>
-          <p className="text-sm text-gray-300 mt-2 line-clamp-3">
-            {movie.overview}
-          </p>
-        </div>
+      </div>
+      <div className="p-4">
+        <h3 className="text-lg font-semibold text-gray-100 truncate">
+          {movie.title}
+        </h3>
+        <p className="text-sm text-gray-400">
+          {movie.release_date?.slice(0, 4)}
+        </p>
       </div>
     </Link>
   );

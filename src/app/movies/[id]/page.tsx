@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-// import { fetchMoviesStart, setPage } from "@/redux/slices/movieSlice";
-import { RootState } from "@/redux/store";
 import MovieCard from "@/components/MovieCard";
 import Pagination from "@/components/Pagination";
+import MoviePlayerModal from "@/components/MoviePlayerModal";
+// import { setPage } from "@/redux/Slices/movieSlice";
+import { RootState } from "@/redux/store";
 import { fetchMovieDetails } from "@/lib/api";
 import { Movie } from "@/types/movie";
 
@@ -20,16 +21,26 @@ export default function MovieDetails() {
   const [movieDetails, setMovieDetails] = useState<Movie | null>(null);
   const [detailsLoading, setDetailsLoading] = useState(true);
   const [detailsError, setDetailsError] = useState<string | null>(null);
+  const [isPlayerOpen, setIsPlayerOpen] = useState(false);
+  const [streamUrl, setStreamUrl] = useState<string | null>(null);
+  const [streamLoading, setStreamLoading] = useState(false);
 
   useEffect(() => {
+    const movieId = Number(id);
+    if (isNaN(movieId)) {
+      setDetailsError("Invalid movie ID");
+      setDetailsLoading(false);
+      return;
+    }
+
     const loadMovieDetails = async () => {
       try {
         setDetailsLoading(true);
-        const details = await fetchMovieDetails(Number(id));
+        const details = await fetchMovieDetails(movieId);
         setMovieDetails(details);
       } catch (err) {
+        console.error("Error fetching movie details:", err);
         setDetailsError("Failed to load movie details");
-        console.log(err);
       } finally {
         setDetailsLoading(false);
       }
@@ -38,13 +49,39 @@ export default function MovieDetails() {
   }, [id]);
 
   useEffect(() => {
-    if (id) {
+    const movieId = Number(id);
+    if (!isNaN(movieId)) {
       dispatch({
         type: "FETCH_SIMILAR_MOVIES",
-        payload: { movieId: Number(id), page },
+        payload: { movieId, page },
       });
     }
   }, [dispatch, id, page]);
+
+  const handleWatchClick = async () => {
+    if (!movieDetails) return;
+    setStreamLoading(true);
+    try {
+      const response = await fetch(
+        `/api/youtube-search?movieId=${id}&title=${encodeURIComponent(
+          movieDetails.title
+        )}`
+      );
+      const data = await response.json();
+      if (data.error) {
+        console.log("YouTube search error:", data.error);
+        setStreamUrl(null);
+      } else {
+        setStreamUrl(data.streamUrl);
+      }
+    } catch (err) {
+      console.error("Error fetching YouTube stream:", err);
+      setStreamUrl(null);
+    } finally {
+      setStreamLoading(false);
+      setIsPlayerOpen(true);
+    }
+  };
 
   if (detailsLoading)
     return (
@@ -61,7 +98,11 @@ export default function MovieDetails() {
       <div className="flex flex-col md:flex-row gap-6 mb-8">
         <div className="flex-shrink-0">
           <Image
-            src={`https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`}
+            src={
+              movieDetails.poster_path
+                ? `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`
+                : "/placeholder.jpg"
+            }
             alt={movieDetails.title}
             width={300}
             height={450}
@@ -78,7 +119,7 @@ export default function MovieDetails() {
           </p>
           <p className="text-gray-400 mb-2">
             <span className="font-semibold">Rating:</span>{" "}
-            {movieDetails.vote_average.toFixed(1)}/10
+            {movieDetails.vote_average?.toFixed(1)}/10
           </p>
           {movieDetails.genres && (
             <p className="text-gray-400 mb-2">
@@ -93,6 +134,32 @@ export default function MovieDetails() {
             </p>
           )}
           <p className="text-gray-300 mt-4">{movieDetails.overview}</p>
+          {/* Watch Button */}
+          <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0">
+            <button
+              onClick={handleWatchClick}
+              disabled={streamLoading}
+              className={`px-4 py-2 rounded font-semibold transition cursor-pointer ${
+                streamLoading
+                  ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 text-gray-100 hover:bg-blue-500"
+              } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              aria-label={`Watch ${movieDetails.title}`}
+            >
+              {streamLoading ? "Searching..." : "Watch Now"}
+            </button>
+            <a
+              href={`https://tubitv.com/search/${encodeURIComponent(
+                movieDetails.title
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded bg-blue-600 text-gray-100 hover:bg-blue-500 text-center"
+              aria-label={`Search ${movieDetails.title} on Tubi`}
+            >
+              Try Tubi
+            </a>
+          </div>
         </div>
       </div>
 
@@ -114,6 +181,17 @@ export default function MovieDetails() {
       {totalPages > 1 && (
         <Pagination currentPage={page} totalPages={totalPages} />
       )}
+
+      {/* Movie Player Modal */}
+      <MoviePlayerModal
+        isOpen={isPlayerOpen}
+        onClose={() => {
+          setIsPlayerOpen(false);
+          setStreamUrl(null);
+        }}
+        url={streamUrl || ""}
+        title={movieDetails.title}
+      />
     </div>
   );
 }

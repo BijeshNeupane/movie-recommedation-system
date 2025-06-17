@@ -20,7 +20,6 @@ export default function Home() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  console.log(movies);
   return (
     <div>
       <div className="flex items-center justify-between mb-4">

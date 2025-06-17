@@ -35,3 +35,7 @@ export const fetchSimilarMovies = async (movieId: number, page: number = 1) => {
   });
   return response.data;
 };
+export const searchMovies = async (query: string, page: number = 1) => {
+  const response = await api.get("/search/movie", { params: { query, page } });
+  return response.data;
+};

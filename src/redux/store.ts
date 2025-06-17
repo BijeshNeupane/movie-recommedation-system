@@ -3,14 +3,20 @@ import { createEpicMiddleware } from "redux-observable";
 import { combineEpics } from "redux-observable";
 import movieReducer from "./Slices/movieSlice";
 import genreReducer from "./Slices/genreSlice";
-import { fetchMoviesEpic, fetchMoviesByGenreEpic } from "./epics/movieEpics";
+import {
+  fetchMoviesEpic,
+  fetchMoviesByGenreEpic,
+  fetchSimilarMoviesEpic,
+  fetchSearchMoviesEpic,
+} from "./epics/movieEpics";
 import { fetchGenresEpic } from "./epics/genreEpics";
 
 const epicMiddleware = createEpicMiddleware();
-
 const rootEpic = combineEpics(
   fetchMoviesEpic,
   fetchMoviesByGenreEpic,
+  fetchSimilarMoviesEpic,
+  fetchSearchMoviesEpic,
   fetchGenresEpic
 );
 

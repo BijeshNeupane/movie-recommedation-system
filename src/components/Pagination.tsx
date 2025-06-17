@@ -2,6 +2,7 @@
 
 import { useDispatch } from "react-redux";
 import { setPage } from "@/redux/Slices/movieSlice";
+import { useState, useEffect } from "react";
 
 interface PaginationProps {
   currentPage: number;
@@ -13,21 +14,31 @@ export default function Pagination({
   totalPages,
 }: PaginationProps) {
   const dispatch = useDispatch();
+  const [maxVisiblePages, setMaxVisiblePages] = useState(5); // Default for SSR
+
+  // Update maxVisiblePages based on window width (client-side only)
+  useEffect(() => {
+    const updateMaxVisiblePages = () => {
+      setMaxVisiblePages(window.innerWidth < 640 ? 3 : 5);
+    };
+
+    updateMaxVisiblePages(); // Initial check
+    window.addEventListener("resize", updateMaxVisiblePages);
+    return () => window.removeEventListener("resize", updateMaxVisiblePages);
+  }, []);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       dispatch(setPage(page));
-      window.scrollTo({ top: 0, behavior: "smooth" }); // Scroll to top on page change
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const getPageNumbers = () => {
-    const maxVisiblePages = 5; // Number of page buttons to show
     const half = Math.floor(maxVisiblePages / 2);
     let start = Math.max(1, currentPage - half);
     const end = Math.min(totalPages, start + maxVisiblePages - 1);
 
-    // Adjust start if end is at totalPages to show maxVisiblePages
     if (end - start + 1 < maxVisiblePages) {
       start = Math.max(1, end - maxVisiblePages + 1);
     }
@@ -56,18 +67,18 @@ export default function Pagination({
 
   return (
     <nav
-      className="flex justify-center items-center space-x-1 mt-6"
+      className="flex justify-center items-center space-x-0.5 sm:space-x-1 mt-6 flex-wrap gap-y-2"
       aria-label="Pagination"
     >
       {/* Previous Button */}
       <button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-3 py-2 rounded font-medium transition cursor-pointer ${
+        className={`px-2 py-1 sm:px-3 sm:py-2 rounded font-medium transition cursor-pointer text-sm sm:text-base ${
           currentPage === 1
             ? "bg-gray-800 text-gray-400 cursor-not-allowed"
             : "bg-gray-700 text-gray-200 hover:bg-blue-500 hover:text-gray-100"
-        } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900`}
+        } `}
         aria-label="Previous page"
       >
         Prev
@@ -78,7 +89,7 @@ export default function Pagination({
         typeof page === "string" ? (
           <span
             key={`ellipsis-${index}`}
-            className="px-3 py-2 text-gray-400"
+            className="px-2 sm:px-3 py-1 sm:py-2 text-gray-400 text-sm sm:text-base hidden sm:inline"
             aria-hidden="true"
           >
             ...
@@ -87,11 +98,11 @@ export default function Pagination({
           <button
             key={page}
             onClick={() => handlePageChange(page)}
-            className={`px-3 py-2 rounded font-medium transition cursor-pointer ${
+            className={`px-2 py-1 sm:px-3 sm:py-2 rounded font-medium transition cursor-pointer text-sm sm:text-base ${
               currentPage === page
                 ? "bg-blue-600 text-gray-100"
                 : "bg-gray-700 text-gray-200 hover:bg-blue-500 hover:text-gray-100"
-            } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900`}
+            }`}
             aria-current={currentPage === page ? "page" : undefined}
             aria-label={`Page ${page}`}
           >
@@ -104,7 +115,7 @@ export default function Pagination({
       <button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-3 py-2 rounded font-medium transition cursor-pointer ${
+        className={`px-2 py-1 sm:px-3 sm:py-2 rounded font-medium transition cursor-pointer text-sm sm:text-base ${
           currentPage === totalPages
             ? "bg-gray-800 text-gray-400 cursor-not-allowed"
             : "bg-gray-700 text-gray-200 hover:bg-blue-500 hover:text-gray-100"

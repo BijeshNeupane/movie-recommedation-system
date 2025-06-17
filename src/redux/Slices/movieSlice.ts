@@ -7,6 +7,7 @@ interface MovieState {
   totalPages: number;
   loading: boolean;
   error: string | null;
+  searchQuery: string;
 }
 
 const initialState: MovieState = {
@@ -15,6 +16,7 @@ const initialState: MovieState = {
   totalPages: 1,
   loading: false,
   error: null,
+  searchQuery: "",
 };
 
 const movieSlice = createSlice({
@@ -38,6 +40,10 @@ const movieSlice = createSlice({
     setPage(state, action: PayloadAction<number>) {
       state.page = action.payload;
     },
+    setSearchQuery(state, action: PayloadAction<string>) {
+      state.searchQuery = action.payload;
+      state.page = 1;
+    },
   },
 });
 
@@ -46,5 +52,6 @@ export const {
   fetchMoviesSuccess,
   fetchMoviesFailure,
   setPage,
+  setSearchQuery,
 } = movieSlice.actions;
 export default movieSlice.reducer;

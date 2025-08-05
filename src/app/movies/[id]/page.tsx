@@ -52,7 +52,7 @@ export default function MovieDetails() {
     const movieId = Number(id);
     if (!isNaN(movieId)) {
       dispatch({
-        type: "FETCH_SIMILAR_MOVIES",
+        type: "FETCH_SIMILAR_MOVIES", 
         payload: { movieId, page },
       });
     }

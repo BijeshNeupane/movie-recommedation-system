@@ -22,7 +22,7 @@ export default function Pagination({
       setMaxVisiblePages(window.innerWidth < 640 ? 3 : 5);
     };
 
-    updateMaxVisiblePages(); // Initial check
+    updateMaxVisiblePages();
     window.addEventListener("resize", updateMaxVisiblePages);
     return () => window.removeEventListener("resize", updateMaxVisiblePages);
   }, []);

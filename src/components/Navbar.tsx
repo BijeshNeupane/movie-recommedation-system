@@ -49,12 +49,12 @@ export default function Navbar() {
         <div className="flex items-center flex-wrap gap-4 justify-center space-x-4">
           <div className="space-x-4">
             <Link href="/">
-              <button className="bg-black px-4 py-2 rounded-xl cursor-pointer hover:bg-gray-900 transition hover:scale-105 active:scale-95">
+              <button className="bg-black text-white px-4 py-2 rounded-xl cursor-pointer hover:bg-gray-900 transition hover:scale-105 active:scale-95">
                 Home
               </button>
             </Link>
             <Link href="/categories" className="">
-              <button className="bg-black px-4 py-2 rounded-xl cursor-pointer hover:bg-gray-900 transition hover:scale-105 active:scale-95">
+              <button className="bg-black text-white px-4 py-2 rounded-xl cursor-pointer hover:bg-gray-900 transition hover:scale-105 active:scale-95">
                 Categories
               </button>
             </Link>
